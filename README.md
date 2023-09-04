@@ -18,17 +18,17 @@
 <br>
 
 ## 페이지 조회 API
-API
+#### API
 ```
 /api/v1/post 
 ```
-Request
+#### Request
 ```
 {
   "pageId" : 1
 }
 ```
-Response
+#### Response
 ```java
 {
     "pageId" : 1,
@@ -41,7 +41,7 @@ Response
 <br>
 
 ## 비지니스 로직
-PageService.java
+#### PageService.java
 ```
 public Page findPage(Long pageId){
     PageDao pageDao = new PageDao();
@@ -49,7 +49,11 @@ public Page findPage(Long pageId){
     return createPage(dtoList);
 }
 ```
-PageDao.java
+#### PageDao.java
++ SQL 쿼리는 WITH RECURSIVE를 사용하여 페이지의 계층 구조를 표현합니다.
++ 먼저, pageId가 일치하는 최상위 페이지를 선택하고, 그 하위 페이지들을 재귀적으로 가져옵니다. 그리고 최상위 페이지와 그 하위 페이지들을 모두 선택한 후, parent_id가 일치하는 페이지들을 추가로 선택합니다.
++ 이렇게 가져온 페이지 정보들은 while 문을 사용하여 PageDto 객체에 저장된 후, 리스트에 추가됩니다.
++ 그리고 마지막으로, 리스트를 반환합니다.
 ```
 public class PageDao {
     public List<PageDto> findById(Long pageId) {
@@ -105,32 +109,6 @@ public class PageDao {
         } finally {
             close(conn, stmt, rs);
         }
-    }
-
-    private void close(Connection conn, PreparedStatement stmt, ResultSet rs) {
-
-        if (rs != null) {
-            try {
-                rs.close();
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-        if (stmt != null) {
-            try {
-                stmt.close();
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-        if (conn != null) {
-            try {
-                conn.close();
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-
     }
 }
 ```
