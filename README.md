@@ -31,11 +31,11 @@
 #### Response
 ```java
 {
-		"pageId" : 4,
-		"title" : "page-d",
-		"content" : "content-d"
-		"subPages" : ["page-e", "page-f"],
-		"breadcrumbs" : ["page-a", "page-b", "page-c", "page-d"]
+  "pageId" : 4,
+  "title" : "page-d",
+  "content" : "content-d"
+  "subPages" : ["page-e", "page-f"],
+  "breadcrumbs" : ["page-a", "page-b", "page-c", "page-d"]
 }
 ```
 
