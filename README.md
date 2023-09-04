@@ -29,7 +29,7 @@
 }
 ```
 #### Response
-```java
+```
 {
   "pageId" : 4,
   "title" : "page-d",
@@ -43,7 +43,7 @@
 
 ## 비지니스 로직
 #### PageService.java
-```
+```java
 public Page findPage(Long pageId){
     PageDao pageDao = new PageDao();
     List<PageDto> dtoList = pageDao.findById(pageId);
@@ -55,7 +55,7 @@ public Page findPage(Long pageId){
 + 먼저, pageId가 일치하는 최상위 페이지를 선택하고, 그 하위 페이지들을 재귀적으로 가져옵니다. 그리고 최상위 페이지와 그 하위 페이지들을 모두 선택한 후, parent_id가 일치하는 페이지들을 추가로 선택합니다.
 + 이렇게 가져온 페이지 정보들은 while 문을 사용하여 PageDto 객체에 저장된 후, 리스트에 추가됩니다.
 + 그리고 마지막으로, 리스트를 반환합니다.
-```
+```java
 public class PageDao {
     public List<PageDto> findById(Long pageId) {
         String sql = """
@@ -117,3 +117,20 @@ public class PageDao {
 <br>
         
 ## 제출하신 과제에 대해서 설명해주세요.
+계층 구조를 WITH RECURSIVE를 사용하여 표현하여, 쿼리 한 번으로 모든 하위 페이지들을 가져올 수 있습니다.
++ 최상위 페이지와 하위 페이지들을 모두 선택한 후, 추가로 parent_id가 일치하는 페이지들을 선택하여, 모든 페이지의 정보를 한 번에 가져올 수 있습니다.
++ while 문을 사용하여 PageDto 객체에 저장한 후, 리스트에 추가하는 방식으로 페이지 정보를 처리하므로, 메모리 사용량이 적습니다.
++ 따라서, 이 구조는 효율적이면서도 유지보수가 용이한 구조입니다.
+
+#### 논의한 다른 옵션사항
+이 구조는 WITH RECURSIVE를 사용하는 구조보다 간단하지만, 계층 구조가 깊어질수록 성능이 저하될 수 있다는 결론을 내렸습니다.
+```
+String sql = """
+            SELECT p.page_id, p.title, p.content, p.parent_id
+            FROM pages.pages p
+            LEFT JOIN pages.pages c
+            ON p.page_id = c.parent_id
+            WHERE p.page_id = ? OR p.parent_id = ?
+            ORDER BY p.page_id;
+            """;
+```
